@@ -27,25 +27,23 @@ public class PostController {
     private final PostRepository postRepository;
     // 새로운 post 등록
     @PostMapping("/newpost")
-    public void newpost(@ModelAttribute PostForm postform) throws IOException {
-        postService.test(postform);
+    public void newPost(@ModelAttribute PostForm postform) throws IOException {
+        Post newPost = postService.newPost(postform);
     }
     @PostMapping("/editpost")
-    public void editpost(@ModelAttribute PostForm postForm) throws IOException{
+    public void editPost(@ModelAttribute PostForm postForm) throws IOException{
 
     }
-    @PostMapping("/edittest")
-    public PostForm edittest(@ModelAttribute PostForm postform) throws IOException {
-        System.out.println(postform);
-        postService.edittest(postform);
-        return postform;
+    @GetMapping("/delete")
+    public void deletePost(@RequestParam Long id) throws IOException{
+        postService.deletePost(id);
     }
     @GetMapping("/getpost/{id}")
-    public Optional<Post> getpost(@PathVariable Long id){
+    public Optional<Post> getPost(@PathVariable Long id){
         return postService.getPost(id);
     }
     @GetMapping("/getpost/all")
-    public List<Post> getallpost(){
+    public List<Post> getallPost(){
         return postService.getAllPost();
     }
 }

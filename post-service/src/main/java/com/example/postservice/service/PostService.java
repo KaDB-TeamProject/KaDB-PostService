@@ -12,6 +12,8 @@ import com.example.postservice.controller.PostForm;
 import com.example.postservice.controller.TransportForm;
 import com.example.postservice.repository.*;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,6 @@ public class PostService{
     private final ParagraphRepository paragraphRepository;
     private final ImagesRepository imagesRepository;
     private final TransportRepository transportRepository;
-    private final TestRepository testRepository;
     private final ScheduleRepository scheduleRepository;
     private final EntityManager em;
     private String fileUpload(MultipartFile multipartFile) throws IOException {
@@ -92,15 +93,10 @@ public class PostService{
         scheduleRepository.save(schedule);
         return post;
     }
-    public void test(PostForm postForm){
-        Test test = new Test();
-        test.setText(postForm.getTitle());
-        System.out.println(postForm.getTitle());
-        Test result = testRepository.save(test);
+    public Post editPost(PostForm postForm, HttpServletRequest request) throws IOException{
     }
-    public void edittest(PostForm postForm){
-        Test test = em.find(Test.class, 1);
-        test.setText(postForm.getTitle());
+    public void deletePost(Long id){
+        postRepository.deleteById(id);
     }
     public Optional<Post> getPost(Long id){
         return postRepository.findById(id);

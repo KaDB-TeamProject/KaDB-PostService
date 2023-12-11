@@ -42,4 +42,8 @@ public class Post {
         this.likes = likes;
         this.category = category;
     }
+    public Post(String title, Category category){
+        this.title = title;
+        this.category = category;
+    }
 }
