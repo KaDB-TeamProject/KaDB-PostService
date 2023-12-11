@@ -1,7 +1,9 @@
 package com.example.postservice.Entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,7 +12,7 @@ import org.springframework.cglib.core.Local;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
     // 해당 프로퍼티가 테이블의 PK 역할을 한다는 것을 의미한다
     @Id
@@ -33,4 +35,11 @@ public class Post {
     @ManyToOne
     @JoinColumn
     private Category category;
+
+    public Post(String title, int views, int likes, Category category) {
+        this.title = title;
+        this.views = views;
+        this.likes = likes;
+        this.category = category;
+    }
 }
