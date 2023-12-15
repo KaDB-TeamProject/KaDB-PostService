@@ -1,6 +1,6 @@
-package com.example.postservice.Entity.comment;
+package com.example.postservice.service.Comment.Entity;
 
-import com.example.postservice.Entity.Post;
+import com.example.postservice.service.Post.Entity.Post;
 import jakarta.persistence.*;
 
 @Entity

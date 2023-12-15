@@ -1,34 +1,37 @@
-package com.example.postservice.Entity.schedule;
+package com.example.postservice.service.Post.Entity;
 
-import com.example.postservice.Entity.Post;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Paragraph {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String place;
+    @Column
     private String address;
+    @Column
     private String text;
     @ManyToOne
     @JoinColumn
-    private Post post;
-    @ManyToOne
-    @JoinColumn
     private Schedule schedule;
+    @OneToMany
+    private List<Transport> transport;
+    @OneToMany
+    private List<Images> images;
 
-    public Paragraph(String place, String address, String text, Post post, Schedule schedule) {
+    @Builder
+    public Paragraph(String place, String address, String text, Schedule schedule) {
         this.place = place;
         this.address = address;
         this.text = text;
-        this.post = post;
         this.schedule = schedule;
     }
 }

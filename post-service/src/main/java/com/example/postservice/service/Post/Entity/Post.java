@@ -1,17 +1,17 @@
-package com.example.postservice.Entity;
+package com.example.postservice.service.Post.Entity;
 
+import com.example.postservice.service.Comment.Entity.Comment;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
     // 해당 프로퍼티가 테이블의 PK 역할을 한다는 것을 의미한다
@@ -24,10 +24,12 @@ public class Post {
         // TABLE : 별도의 키 생성 테이블 사용. 추가로 @TableGenerator 필요
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String title;
-
-    private int views;
-    private int likes;
+    @Column(columnDefinition = "int default 0")
+    private Long views;
+    @Column(columnDefinition = "int default 0")
+    private Long likes;
     @CreationTimestamp
     private LocalDateTime postTime;
     @UpdateTimestamp
@@ -35,14 +37,13 @@ public class Post {
     @ManyToOne
     @JoinColumn
     private Category category;
+    @OneToMany
+    private List<Comment> comments;
+    @OneToMany
+    private List<Schedule> schedules;
 
-    public Post(String title, int views, int likes, Category category) {
-        this.title = title;
-        this.views = views;
-        this.likes = likes;
-        this.category = category;
-    }
-    public Post(String title, Category category){
+    @Builder
+    public Post(String title, Category category) {
         this.title = title;
         this.category = category;
     }
