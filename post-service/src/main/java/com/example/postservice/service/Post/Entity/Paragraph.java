@@ -1,8 +1,13 @@
 package com.example.postservice.service.Post.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,12 +24,13 @@ public class Paragraph {
     private String address;
     @Column
     private String text;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
+    @JsonIgnore
     private Schedule schedule;
-    @OneToMany
-    private List<Transport> transport;
-    @OneToMany
+    @OneToMany(mappedBy = "paragraph",cascade = CascadeType.ALL)
+    private List<Transport> transports;
+    @OneToMany(mappedBy = "paragraph",cascade = CascadeType.ALL)
     private List<Images> images;
 
     @Builder
@@ -33,5 +39,17 @@ public class Paragraph {
         this.address = address;
         this.text = text;
         this.schedule = schedule;
+    }
+    public void addTransport(Transport transport){
+        if (transports == null){
+            transports = new ArrayList<Transport>();
+        }
+        transports.add(transport);
+    }
+    public void addImages(Images image){
+        if (images == null){
+            images = new ArrayList<Images>();
+        }
+        images.add(image);
     }
 }

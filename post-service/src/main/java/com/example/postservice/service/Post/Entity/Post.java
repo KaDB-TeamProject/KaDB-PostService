@@ -1,6 +1,9 @@
 package com.example.postservice.service.Post.Entity;
 
 import com.example.postservice.service.Comment.Entity.Comment;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -8,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,25 +30,40 @@ public class Post {
     private Long id;
     @Column(nullable = false)
     private String title;
-    @Column(columnDefinition = "int default 0")
+    @Column
+    @ColumnDefault("0")
     private Long views;
-    @Column(columnDefinition = "int default 0")
+    @Column
+    @ColumnDefault("0")
     private Long likes;
     @CreationTimestamp
     private LocalDateTime postTime;
     @UpdateTimestamp
     private LocalDateTime updateTime;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Category category;
-    @OneToMany
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
     private List<Comment> comments;
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     private List<Schedule> schedules;
 
     @Builder
     public Post(String title, Category category) {
         this.title = title;
         this.category = category;
+    }
+   public void addComment(Comment comment){
+        if (comments == null){
+            comments = new ArrayList<Comment>();
+        }
+        comments.add(comment);
+    }
+
+    public void addSchedule(Schedule schedule){
+        if (schedules == null){
+            schedules = new ArrayList<Schedule>();
+        }
+        schedules.add(schedule);
     }
 }

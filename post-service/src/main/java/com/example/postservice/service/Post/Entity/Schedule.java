@@ -1,11 +1,12 @@
 package com.example.postservice.service.Post.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,13 +16,19 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
+    @JsonIgnore
     private Post post;
-    @OneToMany
-    private List<Paragraph> paragraph;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<Paragraph> paragraphs;
     @Builder
     public Schedule(Post post){
         this.post = post;
     }
+    public void addParagraph(Paragraph paragraph){
+        if(paragraphs == null){
+           paragraphs = new ArrayList<Paragraph>();
+        }
+        this.paragraphs.add(paragraph); }
 }

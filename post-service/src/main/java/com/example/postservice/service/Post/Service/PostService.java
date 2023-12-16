@@ -1,10 +1,7 @@
 package com.example.postservice.service.Post.Service;
 
 import com.example.postservice.service.Post.Dto.Request.*;
-import com.example.postservice.service.Post.Dto.Response.PostResponseDto;
-import com.example.postservice.service.Post.Entity.Post;
-import com.example.postservice.service.Post.Entity.Paragraph;
-import com.example.postservice.service.Post.Entity.Schedule;
+import com.example.postservice.service.Post.Entity.*;
 import com.example.postservice.service.Post.Repository.*;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,6 @@ public class PostService{
     private final ImagesRepository imagesRepository;
     private final TransportRepository transportRepository;
     private final ScheduleRepository scheduleRepository;
-    private final EntityManager em;
     private String fileUpload(MultipartFile multipartFile) throws IOException {
         // 파일 저장 경로 설정 : 실제 서비스되는 위치(프로젝트 외부에 저장)
         // 마지막에 / 필요
@@ -50,24 +46,30 @@ public class PostService{
         postRepository.save(newPost);
         for (ScheduleRequestDto schedule:postRequestDto.getSchedules()) {
             Schedule newSchedule = schedule.toEntity(newPost);
+            newPost.addSchedule(newSchedule);
             scheduleRepository.save(newSchedule);
             for (ParagraphRequestDto paragraph : schedule.getParagraph()) {
                 Paragraph newParagraph = paragraph.toEntity(newSchedule);
+                newSchedule.addParagraph(newParagraph);
                 System.out.println("paragraph save start");
                 System.out.println(newParagraph);
                 paragraphRepository.save(newParagraph);
                 System.out.println("paragraph save end");
                 if (paragraph.getTransports()!=null) {
                     for (TransportRequestDto transport : paragraph.getTransports()) {
+                        Transport newTransport = transport.toEntity(newParagraph);
+                        newParagraph.addTransport(newTransport);
                         System.out.println("transport save start");
-                        transportRepository.save(transport.toEntity(newParagraph));
+                        transportRepository.save(newTransport);
                         System.out.println("transport save end");
                     }
                 }
                 if(paragraph.getImages()!=null) {
                     for (MultipartFile image : paragraph.getImages()) {
+                        Images newImage = new ImagesRequestDto(fileUpload(image)).toEntity(newParagraph);
+                        newParagraph.addImages(newImage);
                         System.out.println("images save start");
-                        imagesRepository.save(new ImagesRequestDto(fileUpload(image)).toEntity(newParagraph));
+                        imagesRepository.save(newImage);
                         System.out.println("images save end");
                     }
                 }

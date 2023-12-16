@@ -13,7 +13,6 @@ public class ImagesRequestDto {
     private Long id;
     private String url;
     @Builder
-
     public ImagesRequestDto(String url) {
         this.url = url;
     }

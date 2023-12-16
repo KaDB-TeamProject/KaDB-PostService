@@ -1,5 +1,7 @@
 package com.example.postservice.service.Post.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,8 +23,9 @@ public class Transport {
     private int time;
     @Column
     private int money;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
+    @JsonIgnore
     private Paragraph paragraph;
 
     @Builder
