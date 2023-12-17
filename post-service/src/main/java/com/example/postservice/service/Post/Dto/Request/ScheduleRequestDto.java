@@ -15,13 +15,16 @@ import java.util.List;
 public class ScheduleRequestDto {
     private Long id;
     private List<ParagraphRequestDto> paragraph;
+    private String city;
     @Builder
-    public ScheduleRequestDto(List<ParagraphRequestDto> paragraph) {
+    public ScheduleRequestDto(List<ParagraphRequestDto> paragraph, String city) {
         this.paragraph = paragraph;
+        this.city = city;
     }
     public Schedule toEntity(Post post){
         return Schedule.builder().
                 post(post).
+                city(this.city).
                 build();
     }
 }

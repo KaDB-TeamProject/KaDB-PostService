@@ -3,7 +3,6 @@ package com.example.postservice.service.Post.Service;
 import com.example.postservice.service.Post.Dto.Request.*;
 import com.example.postservice.service.Post.Entity.*;
 import com.example.postservice.service.Post.Repository.*;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -81,7 +79,7 @@ public class PostService{
             Schedule newSchedule;
             if(wrapperSchedule.isPresent()){
                 newSchedule = wrapperSchedule.get();
-                newSchedule.editSchedule(newPost);
+                newSchedule.editSchedule(newPost,schedule.getCity());
             }
             else{
                 newSchedule = schedule.toEntity(newPost);

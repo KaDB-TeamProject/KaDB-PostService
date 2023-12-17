@@ -1,5 +1,6 @@
 package com.example.postservice.service.Comment.Service;
 
+import com.example.postservice.service.Comment.Dto.CommentRequestDto;
 import com.example.postservice.service.Comment.Entity.Comment;
 import com.example.postservice.service.Comment.Repository.CommentReposiroty;
 import com.example.postservice.service.Post.Entity.Post;
@@ -18,7 +19,22 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentReposiroty commentReposiroty;
 
-    private List<Comment> getAllComments(Long id){
-        return commentReposiroty.findAllByPost(postRepository.findById(id).get());
+    private Post findPost(Long id){
+        return postRepository.findById(id).get();
+    }
+    public void newComment(CommentRequestDto comment,Long postId){
+        Comment newComment = comment.toEntity(findPost(postId));
+        commentReposiroty.save(newComment);
+    }
+    public void editComment(CommentRequestDto comment, Long commentId){
+        Comment newComment = commentReposiroty.findById(commentId).get();
+        newComment.editComment(comment.getText(),comment.getPost());
+        commentReposiroty.save(newComment);
+    }
+    public List<Comment> getAllComments(Long postId){
+        return commentReposiroty.findAllByPost(findPost(postId));
+    }
+    public void deleteComment(Long commentId){
+        commentReposiroty.deleteById(commentId);
     }
 }

@@ -22,12 +22,16 @@ public class Schedule {
     private Post post;
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Paragraph> paragraphs;
+    @Column
+    private String city;
     @Builder
-    public Schedule(Post post){
+    public Schedule(Post post, String city){
         this.post = post;
+        this.city = city;
     }
-    public void editSchedule(Post post){
+    public void editSchedule(Post post, String city){
         this.post = post;
+        this.city = city;
     }
     public void addParagraph(Paragraph paragraph){
         if(paragraphs == null){
