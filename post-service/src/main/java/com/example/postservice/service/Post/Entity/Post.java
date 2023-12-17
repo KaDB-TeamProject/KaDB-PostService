@@ -1,14 +1,10 @@
 package com.example.postservice.service.Post.Entity;
 
 import com.example.postservice.service.Comment.Entity.Comment;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +13,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
+@DynamicUpdate
 public class Post {
     // 해당 프로퍼티가 테이블의 PK 역할을 한다는 것을 의미한다
     @Id
@@ -45,7 +43,7 @@ public class Post {
     private Category category;
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
     private List<Comment> comments;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
 
     @Builder
@@ -53,6 +51,12 @@ public class Post {
         this.title = title;
         this.category = category;
     }
+
+    public void editPost(String title, Category category){
+        this.title = title;
+        this.category = category;
+    }
+
    public void addComment(Comment comment){
         if (comments == null){
             comments = new ArrayList<Comment>();

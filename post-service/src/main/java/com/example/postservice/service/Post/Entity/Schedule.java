@@ -26,6 +26,9 @@ public class Schedule {
     public Schedule(Post post){
         this.post = post;
     }
+    public void editSchedule(Post post){
+        this.post = post;
+    }
     public void addParagraph(Paragraph paragraph){
         if(paragraphs == null){
            paragraphs = new ArrayList<Paragraph>();

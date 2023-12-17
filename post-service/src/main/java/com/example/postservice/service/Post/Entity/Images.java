@@ -1,6 +1,5 @@
 package com.example.postservice.service.Post.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,10 +17,18 @@ public class Images {
     private Paragraph paragraph;
     @Column(nullable = false)
     private String url;
+    @Column
+    private String originalName;
 
     @Builder
-    public Images(Paragraph paragraph, String url) {
+    public Images(Paragraph paragraph, String url, String originalName) {
         this.paragraph = paragraph;
         this.url = url;
+        this.originalName = originalName;
+    }
+    public void editImages(Paragraph paragraph, String url, String originalName) {
+        this.paragraph = paragraph;
+        this.url = url;
+        this.originalName = originalName;
     }
 }

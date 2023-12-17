@@ -12,14 +12,17 @@ import lombok.Setter;
 public class ImagesRequestDto {
     private Long id;
     private String url;
+    private String originalName;
     @Builder
-    public ImagesRequestDto(String url) {
+    public ImagesRequestDto(String url,String originalName) {
         this.url = url;
+        this.originalName = originalName;
     }
     public Images toEntity(Paragraph paragraph){
         return Images.builder().
                 paragraph(paragraph).
                 url(this.url).
+                originalName(this.originalName).
                 build();
     }
 }

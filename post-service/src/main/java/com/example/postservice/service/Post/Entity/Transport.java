@@ -1,5 +1,6 @@
 package com.example.postservice.service.Post.Entity;
 
+import com.example.postservice.service.Post.Dto.Request.TransportRequestDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -35,5 +36,11 @@ public class Transport {
         this.time = time;
         this.money = money;
         this.paragraph = paragraph;
+    }
+    public void editTransport(TransportRequestDto transport) {
+        this.transport = transport.getTransport();
+        this.transportName = transport.getTransportName();
+        this.time = transport.getTime();
+        this.money = transport.getMoney();
     }
 }

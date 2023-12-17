@@ -36,41 +36,92 @@ public class PostService{
         String originalFileName = multipartFile.getOriginalFilename();
         // 파일 이름이 중복되지 않도록 파일 이름 변경 : 서버에 저장할 이름
         UUID uuid = UUID.randomUUID();
-        String savedFileName = uuid.toString() + "_" + originalFileName;
+        String savedFileName = uuid + "_" + originalFileName;
         // 파일 생성
         File newFile = new File(uploadPath + savedFileName);
         multipartFile.transferTo(newFile);
         return savedFileName;
     }
+    private void fileDel(String path) {
+        File file = new File(path);
+        file.delete();
+    }
     private void savePostRepositories(Post newPost, PostRequestDto postRequestDto) throws IOException, DataIntegrityViolationException {
         postRepository.save(newPost);
-        for (ScheduleRequestDto schedule:postRequestDto.getSchedules()) {
+        for (ScheduleRequestDto schedule : postRequestDto.getSchedules()) {
             Schedule newSchedule = schedule.toEntity(newPost);
             newPost.addSchedule(newSchedule);
             scheduleRepository.save(newSchedule);
             for (ParagraphRequestDto paragraph : schedule.getParagraph()) {
                 Paragraph newParagraph = paragraph.toEntity(newSchedule);
                 newSchedule.addParagraph(newParagraph);
-                System.out.println("paragraph save start");
-                System.out.println(newParagraph);
                 paragraphRepository.save(newParagraph);
-                System.out.println("paragraph save end");
-                if (paragraph.getTransports()!=null) {
+                if (paragraph.getTransports() != null) {
                     for (TransportRequestDto transport : paragraph.getTransports()) {
                         Transport newTransport = transport.toEntity(newParagraph);
                         newParagraph.addTransport(newTransport);
-                        System.out.println("transport save start");
                         transportRepository.save(newTransport);
-                        System.out.println("transport save end");
                     }
                 }
-                if(paragraph.getImages()!=null) {
+                if (paragraph.getImages() != null) {
                     for (MultipartFile image : paragraph.getImages()) {
-                        Images newImage = new ImagesRequestDto(fileUpload(image)).toEntity(newParagraph);
+                        Images newImage = new ImagesRequestDto(fileUpload(image),image.getOriginalFilename()).toEntity(newParagraph);
                         newParagraph.addImages(newImage);
-                        System.out.println("images save start");
                         imagesRepository.save(newImage);
-                        System.out.println("images save end");
+                    }
+                }
+            }
+        }
+    }
+
+    private void editPostRepositories(Post newPost, PostRequestDto postRequestDto) throws IOException, DataIntegrityViolationException{
+        postRepository.save(newPost);
+        for (ScheduleRequestDto schedule : postRequestDto.getSchedules()) {
+            Optional<Schedule> wrapperSchedule = scheduleRepository.findById(schedule.getId());
+            Schedule newSchedule;
+            if(wrapperSchedule.isPresent()){
+                newSchedule = wrapperSchedule.get();
+                newSchedule.editSchedule(newPost);
+            }
+            else{
+                newSchedule = schedule.toEntity(newPost);
+                newPost.addSchedule(newSchedule);
+            }
+            scheduleRepository.save(newSchedule);
+            for (ParagraphRequestDto paragraph : schedule.getParagraph()) {
+                Optional<Paragraph> wrapperParagraph = paragraphRepository.findById(paragraph.getId());
+                Paragraph newParagraph;
+                if(wrapperParagraph.isPresent()){
+                    newParagraph = wrapperParagraph.get();
+                    newParagraph.editParagraph(paragraph);
+                }
+                else{
+                    newParagraph = paragraph.toEntity(newSchedule);
+                    newSchedule.addParagraph(newParagraph);
+                }
+                newParagraph.editParagraph(paragraph);
+                paragraphRepository.save(newParagraph);
+                if (paragraph.getTransports() != null) {
+                    for (TransportRequestDto transport : paragraph.getTransports()) {
+                        Optional<Transport> wrapperTransport = transportRepository.findById(transport.getId());
+                        Transport newTransport;
+                        if(wrapperTransport.isPresent()){
+                            newTransport = wrapperTransport.get();
+                            newTransport.editTransport(transport);
+                        }
+                        else{
+                            newTransport = transport.toEntity(newParagraph);
+                            newParagraph.addTransport(newTransport);
+                        }
+                        newTransport.editTransport(transport);
+                        transportRepository.save(newTransport);
+                    }
+                }
+                if (paragraph.getImages() != null) {
+                    for (MultipartFile image : paragraph.getImages()) {
+                        Images newImage = new ImagesRequestDto(fileUpload(image),image.getOriginalFilename()).toEntity(newParagraph);
+                        newParagraph.addImages(newImage);
+                        imagesRepository.save(newImage);
                     }
                 }
             }
@@ -81,9 +132,9 @@ public class PostService{
         savePostRepositories(newPost,postRequestDto);
     }
     public void savePost(PostRequestDto postRequestDto, Long id) throws IOException {
-        Optional<Post> postWrapper = postRepository.findById(id);
-        Post editPost = postWrapper.get();
-        savePostRepositories(editPost,postRequestDto);
+        Post editPost = postRepository.findById(id).get();
+        editPost.editPost(postRequestDto.getTitle(),categoryRepository.findByName(postRequestDto.getCategory()));
+        editPostRepositories(editPost,postRequestDto);
     }
     public void deletePost(Long id){
         postRepository.deleteById(id);

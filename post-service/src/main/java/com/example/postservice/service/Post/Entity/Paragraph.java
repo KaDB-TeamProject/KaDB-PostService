@@ -1,5 +1,6 @@
 package com.example.postservice.service.Post.Entity;
 
+import com.example.postservice.service.Post.Dto.Request.ParagraphRequestDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -39,6 +40,11 @@ public class Paragraph {
         this.address = address;
         this.text = text;
         this.schedule = schedule;
+    }
+    public void editParagraph(ParagraphRequestDto paragraph) {
+        this.place = paragraph.getPlace();
+        this.address = paragraph.getAddress();
+        this.text = paragraph.getText();
     }
     public void addTransport(Transport transport){
         if (transports == null){
