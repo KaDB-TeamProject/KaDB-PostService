@@ -1,7 +1,6 @@
 package com.example.postservice.service.Post.Dto.Request;
 
 import com.example.postservice.service.Post.Entity.Paragraph;
-import com.example.postservice.service.Post.Entity.Post;
 import com.example.postservice.service.Post.Entity.Schedule;
 import lombok.Builder;
 import lombok.Getter;
